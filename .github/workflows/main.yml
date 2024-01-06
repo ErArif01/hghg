@@ -19,7 +19,7 @@ jobs:
         export CURRENT_DATE=$(date -u +"%Y-%m-%dT16:10:00Z")
         # Extracting due date from the issue (replace with your logic)
         DUE_DATE=$(curl -sH "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                      "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.inputs.issueNumber }}" \
+                      "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.client_payload.issueNumber }}" \
                       | jq -r '.due_on')
         # Calculate the time difference in seconds
         NOW=$(date -u +"%s")
@@ -33,7 +33,10 @@ jobs:
                -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
                -H "Content-Type: application/json" \
                -d "{\"body\":\"$COMMENT\"}" \
-               "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.inputs.issueNumber }}/comments"
+               "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.client_payload.issueNumber }}/comments"
         else
+          echo "No reminder needed."
+        fi
+
           echo "No reminder needed."
         fi
